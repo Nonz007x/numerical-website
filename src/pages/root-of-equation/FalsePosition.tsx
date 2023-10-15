@@ -56,7 +56,7 @@ const FalsePosition = () => {
 
     return (
         <>
-            False Position
+            <h1>False Position</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" onChange={(e) => setTolerance(Number(e.target.value))} placeholder="Tolerance" />
                 <input type="text" onChange={(e) => setXl(Number(e.target.value))} placeholder="xl" />

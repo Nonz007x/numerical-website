@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import { routes, Route } from './utils';
+import './css/sidebar.css';
 
 function Sidebar() {
 
@@ -8,8 +8,8 @@ function Sidebar() {
             <h1>Menu</h1>
             <ul className="menu">
                 {routes.map((route: Route, index: number) => (
-                    <li key={index} className='menu'>
-                        <a href={route.path}>{route.path === '/' ? 'Home' : route.path.replace('/', '')}</a>
+                    <li key={index} className='menu'> 
+                        <a href={route.path}>{route.name}</a>
                     </li>
                 ))}
             </ul>

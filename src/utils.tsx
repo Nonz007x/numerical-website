@@ -1,10 +1,10 @@
-import Bisection from './pages/root-of-equation/Bisection.tsx';
-import Home from './Home.tsx';
-import Graphical from './pages/root-of-equation/Graphical.tsx';
 import FalsePosition from './pages/root-of-equation/FalsePosition.tsx';
-import FixedPoint from './pages/root-of-equation/FixedPoint.tsx';
 import NewtonRaphson from './pages/root-of-equation/NewtonRaphson.tsx';
+import FixedPoint from './pages/root-of-equation/FixedPoint.tsx';
+import Bisection from './pages/root-of-equation/Bisection.tsx';
+import Graphical from './pages/root-of-equation/Graphical.tsx';
 import Secant from './pages/root-of-equation/Secant.tsx';
+import Home from './Home.tsx';
 
 
 export interface Route {

@@ -38,7 +38,7 @@ const FixedPoint = () => {
 
     return (
         <>
-            Fixed Point
+            <h1>Fixed Point</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" onChange={(e) => setTolerance(Number(e.target.value))} placeholder="Tolerance" />
                 <input type="text" onChange={(e) => setX0(Number(e.target.value))} placeholder="x0" />

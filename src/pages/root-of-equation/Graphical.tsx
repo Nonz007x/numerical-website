@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { TextField, Button } from '@mui/material';
 import * as math from 'mathjs'
 
 const Graphical = () => {
@@ -45,17 +46,19 @@ const Graphical = () => {
 
   return (
     <>
-      Graphical
-
-      <form onSubmit={handleSubmit}>
-        <input type="text" onChange={(e) => setTolerance(Number(e.target.value))}  placeholder="Tolerance" />
-        <input type="text" onChange={(e) => setStart(Number(e.target.value))}  placeholder="start" />
-        <input type="text" onChange={(e) => setStop(Number(e.target.value))} placeholder="stop" />
-        <input type="text" onChange={handleChange} value={fn} placeholder="Function" />
-        <button type="submit">Submit</button>
-      </form>
-      <div>
-        Result: {result !== null ? result : "Invalid Expression"}
+      <div className="esan">
+        <h1 className='center'>Graphical</h1>
+        <form onSubmit={handleSubmit}>
+          <TextField id="standard-basic" label="Enter Function ( f(x) )" variant="filled" type="text" onChange={handleChange} value={fn} style={{ width: '100%' }} size='small' />
+          <TextField id="standard-basic" label="Error (e)" variant="filled" value={tolerance} onChange={(e) => setTolerance(Number(!e.target.value ? 1e-6 : e.target.value))} style={{ width: '100%' }} size='small' />
+          <TextField id="standard-basic" label="Start" variant="filled" value={tolerance} onChange={(e) => setStart(Number(e.target.value))} style={{ width: '100%' }} size='small' />
+          <TextField id="standard-basic" label="Stop" variant="filled" value={tolerance} onChange={(e) => setStop(Number(e.target.value))} style={{ width: '100%' }} size='small' />
+          <Button type="submit" variant='contained' color='success'>submit</Button>
+          <Button type="submit" variant='contained' color='error'>clear</Button>
+        </form>
+        <div>
+          Result: {result !== null ? result : "Invalid Expression"}
+        </div>
       </div>
     </>
   );
