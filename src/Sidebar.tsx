@@ -1,18 +1,18 @@
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { routes, Route } from './utils';
 
 function Sidebar() {
+
     return (
         <div className="sidebar">
             <h1>Menu</h1>
-            <li className="menu">
-                <a href="/">Home</a>
-                <a href="/graphical">Graphical</a>
-                <a href="/Bisection">Bisection</a>
-                <a href="/falseposition">False Position</a>
-                <a href="/fixedpoint">Fixed Point</a>
-                <a href="/newtonraphson">Newton Raphson</a>
-            </li>
+            <ul className="menu">
+                {routes.map((route: Route, index: number) => (
+                    <li key={index} className='menu'>
+                        <a href={route.path}>{route.path === '/' ? 'Home' : route.path.replace('/', '')}</a>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }

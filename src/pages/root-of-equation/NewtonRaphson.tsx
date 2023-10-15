@@ -8,22 +8,27 @@ const NewtonRaphson = () => {
     const [x0, setX0] = useState<number>(0);
     const [result, setResult] = useState<string | null>(null);
 
-    function newtonRaphsonMethod(x0: number, fn: string) {
+    function newtonRaphsonMethod(initialGuess: number, equation: string) {
         const MAX_ITER = 1000;
-        const f = math.compile(fn);
 
-        let x: number = x0;
-        let i : number = 0;
-        while (true) {
-            i++;
-            const fx = f.evaluate({ x: x });
-            console.log()
-            const diff_fx = math.derivative(fn, 'x');
-            const xold: number = x;
-            x = x - (fx / diff_fx.evaluate({x : x}));
-            if (math.abs(xold - x) < tolerance || i >= MAX_ITER) {
-                break;
+        const compiledEquation = math.compile(equation);
+        const derivativeEquation = math.derivative(equation, "x");
+
+        let x: number = initialGuess;
+        let iteration: number = 0;
+        try {
+            while (true) {
+                iteration++;
+                const equationValue = compiledEquation.evaluate({ x: x }); // problem is here
+                const previousX: number = x;
+                x = x - (equationValue / derivativeEquation.evaluate({ x: x }));
+                if (math.abs(previousX - x) < tolerance || iteration >= MAX_ITER) {
+                    break;
+                }
             }
+        } catch (error) {
+            console.log(error);
+            return null;
         }
         return x;
     }
@@ -37,7 +42,6 @@ const NewtonRaphson = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
         const result = newtonRaphsonMethod(x0, fn);
-        console.log(result);
         setResult(result !== null ? result.toFixed(-Math.log10(tolerance)) : "Invalid Expression");
     };
 

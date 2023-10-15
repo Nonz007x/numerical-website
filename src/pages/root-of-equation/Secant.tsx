@@ -1,28 +1,29 @@
 import React, { useState } from 'react'
 import * as math from 'mathjs'
 
-const FixedPoint = () => {
+const Secant = () => {
     const { sqrt, pow, sin, cos, tan } = math;
     const [tolerance, setTolerance] = useState<number>(1e-6);
     const [fn, setFn] = useState('');
     const [x0, setX0] = useState<number>(0);
+    const [x1, setX1] = useState<number>(0);
     const [result, setResult] = useState<string | null>(null);
 
-    function fixedPointMethod(x0: number, fn: string): number {
-        const compiledEquation = math.compile(fn);
-        let error : number = 0, previousX: number;
+    function secentMethod(x0: number, x1: number, equation: string) {
+        const f = math.compile(equation);
 
-        let xr = x0;
+        let previousX: number;
+        let xi = x0;
+
         do {
-            previousX = xr;
-            xr = compiledEquation.evaluate({ x: previousX });
-            if (xr != 0){
-                error = math.abs((xr - previousX) / xr) * 100;
-            }
-        } while (error > tolerance);
-
-        return xr;
+            previousX = xi;
+            xi = x0 - (f.evaluate({ x: x0 }) * (x0 - x1)) / (f.evaluate({ x: x0 }) - f.evaluate({ x: x1 }));
+            x0 = x1;
+            x1 = xi;
+        } while (Math.abs((xi - previousX) / xi) * 100 > 0.000001);
+        return xi;
     }
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
@@ -31,22 +32,23 @@ const FixedPoint = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
-        const result = fixedPointMethod(x0, fn);
-        console.log(result);
+        const result = secentMethod(x0, x1, fn);
         setResult(result !== null ? result.toFixed(-Math.log10(tolerance)) : "Invalid Expression");
     };
 
     return (
         <>
-            Fixed Point
+            <h1>Secant</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" onChange={(e) => setTolerance(Number(e.target.value))} placeholder="Tolerance" />
                 <input type="text" onChange={(e) => setX0(Number(e.target.value))} placeholder="x0" />
+                <input type="text" onChange={(e) => setX1(Number(e.target.value))} placeholder="x1" />
                 <input type="text" onChange={handleChange} value={fn} placeholder="Function" />
                 <button type="submit">Submit</button>
             </form>
             {tolerance} <br />
             {x0}
+            {x1}
             <div>
                 Result: {result !== null ? result : "Invalid Expression"}
             </div>
@@ -54,4 +56,4 @@ const FixedPoint = () => {
     );
 }
 
-export default FixedPoint;
+export default Secant;
