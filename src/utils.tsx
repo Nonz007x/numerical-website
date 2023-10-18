@@ -5,6 +5,7 @@ import Bisection from './pages/root-of-equation/Bisection.tsx';
 import Graphical from './pages/root-of-equation/Graphical.tsx';
 import Secant from './pages/root-of-equation/Secant.tsx';
 import Home from './Home.tsx';
+import Gaussian_elimination from './pages/linear-equation/Gaussian_elimination.tsx';
 
 
 export interface Route {
@@ -48,5 +49,10 @@ export const routes: Route[] = [
     path: "/secant",
     name: "Secant",
     element: <Secant />
+  },
+  {
+    path: "/gaussian_elimination",
+    name: "Gaussian Elimination",
+    element: <Gaussian_elimination />
   }
 ];

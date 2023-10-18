@@ -1,46 +1,13 @@
 import React, { useState } from 'react'
-import * as math from 'mathjs'
+import { falsePositionMethod } from './rootOfequation';
+import { TextField, Button } from '@mui/material';
 
 const FalsePosition = () => {
-    const { sqrt, pow, sin, cos, tan } = math;
-    const [tolerance, setTolerance] = useState<number>(1e-6);
+    const [toleranceInput, setToleranceInput] = useState<string>('0.000001');
     const [fn, setFn] = useState('');
     const [xl, setXl] = useState<number>(0);
     const [xu, setXu] = useState<number>(0);
     const [result, setResult] = useState<string | null>(null);
-
-    function falsePositionMethod(xl: number, xu: number, fn: string): number {
-        
-        const f = math.compile(fn);
-
-        const fl: number = f.evaluate({ x: xl });
-        const fu: number = f.evaluate({ x: xu });
-        
-        let xrold: number, fr: number, test: number;
-        let xr = 0;
-
-        do {
-            xrold = xr;
-            xr = xu - fu * (xl - xu) / (fl - fu);
-            fr = f.evaluate({ x: xr });
-
-            if (xr !== 0) {
-                const ea: number = Math.abs((xr - xrold) / xr) * 100;
-                if (ea < tolerance) {
-                    return xr; // Converged
-                }
-            }
-
-            test = fl * fr;
-            if (test < 0) {
-                xu = xr;
-            } else if (test > 0) {
-                xl = xr;
-            } else {
-                return xr; // Exact root found
-            }
-        } while (true);
-    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
@@ -49,25 +16,40 @@ const FalsePosition = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
-        const result = falsePositionMethod(xl, xu, fn);
+        const tolerance = Number(toleranceInput);
+        const result = falsePositionMethod(fn, xl, xu, tolerance);
         console.log(result);
-        setResult(result !== null ? result.toFixed(-Math.log10(tolerance)) : "Invalid Expression");
+        setResult(result !== null ? 'Root is: ' + result.toFixed(-Math.log10(tolerance)) : "Invalid Expression");
     };
 
+    const handleClear = (): void => {
+        setToleranceInput('');
+        setResult('');
+        setFn('');
+        setXl(0);
+        setXu(0);
+    }
     return (
         <>
-            <h1>False Position</h1>
-            <form onSubmit={handleSubmit}>
-                <input type="text" onChange={(e) => setTolerance(Number(e.target.value))} placeholder="Tolerance" />
-                <input type="text" onChange={(e) => setXl(Number(e.target.value))} placeholder="xl" />
-                <input type="text" onChange={(e) => setXu(Number(e.target.value))} placeholder="xu" />
-                <input type="text" onChange={handleChange} value={fn} placeholder="Function" />
-                <button type="submit">Submit</button>
-            </form>
-            {tolerance} <br />
-            {xl}
-            <div>
-                Result: {result !== null ? result : "Invalid Expression"}
+            <div className="esan">
+                <h1 className='center'>False Position</h1>
+                <form onSubmit={handleSubmit} className='form-padding'>
+                    <div className="functionInput">
+                        <TextField label="Enter Function ( f(x) )" variant="filled" type="text" onChange={handleChange} value={fn} style={{ width: '100%' }} size='small' />
+                        <TextField label="Error (e)" variant="filled" value={toleranceInput} onChange={(e) => setToleranceInput(e.target.value)} style={{ width: '30%' }} size='small' />
+                    </div>
+                    <div className='guessInput'>
+                        <TextField label="Guess 1 (xl)" variant="filled" type="text" onChange={(e) => setXl(Number(e.target.value))} style={{ width: '50%' }} size='small' />
+                        <TextField label="Guess 2 (xu)" variant="filled" type="text" onChange={(e) => setXu(Number(e.target.value))} style={{ width: '50%' }} size='small' />
+                    </div>
+                    <div className="submitButton">
+                        <Button type="submit" variant='contained' color='success'>Submit</Button>
+                        <Button variant='contained' onClick={handleClear} color='error'>clear</Button>
+                    </div>
+                </form>
+                <div>
+                    {result}
+                </div>
             </div>
         </>
     );
