@@ -1,126 +1,170 @@
-import React, { useEffect } from 'react'
-import { gauss_elimination } from './linearEquation'
-import { TextField, Button, InputLabel, Select, MenuItem } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
-import { useState } from 'react';
+import { Box, TextField, Stack, Button, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import { useEffect, useState } from "react";
+import { gauss_elimination, createAugmentedMatrix, cramer, matrixInversion, luDecomposition } from "./linearEquation";
 
 function Gaussian_elimination() {
-  const [size, setSize] = useState<number>(2);
-  const [matrixValues, setMatrixValues] = useState<number[][]>([[]]);
-  const [displayMatrix, setDisplayMatrix] = useState<JSX.Element[]>([]);
+  enum Methods {
+    Cramer = 'Cramer',
+    Gauss = 'Gauss',
+    Inversion = 'Matrix Inversion',
+    LU = 'LU Decomposition'
+  }
+  const [size, setSize] = useState<number>(3);
+  const [A, setA] = useState<number[][]>(() => {
+    return Array.from({ length: size }, () => new Array(size).fill(0));
+  });
+  const [B, setB] = useState<number[]>(() => new Array(size).fill(0));
+  const [currentMethod, setCurrentMethod] = useState<string>('');
+  const [ans, setAns] = useState<number[]>();
 
-  const initializeMatrix = () => {
-    console.log("initializing...");
-    setMatrixValues(() => {
-      const initialArray: number[][] = new Array(size);
+  useEffect(() => {
+    setA(() => Array.from({ length: size }, () => new Array(size).fill(0)));
+    setB(() => new Array(size).fill(0));
+  }, [size]);
 
-      for (let i = 0; i < size; i++) {
-        initialArray[i] = new Array(size + 1).fill(0);
-      }
-      return initialArray;
-    });
-    console.log(matrixValues);
-  };
-
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const [row, col] = name.split('-');
-
-    setMatrixValues((oldMatrix: number[][]) => {
-      const newValues = [...oldMatrix.map(row => [...row])];
-      newValues[parseInt(row)][parseInt(col)] = Number(value);
-      return newValues;
-    });
-  };
-
-  const handleDropdown = (e: SelectChangeEvent<number>) => {
-    e.preventDefault();
-    setSize(Number(e.target.value));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(matrixValues);
-    const result = gauss_elimination(matrixValues);
-    const formattedResult: number[] | undefined = result?.map((num) => parseFloat(num.toFixed(6)));
-    console.log(formattedResult);
-  };
-
-  const generateMatrix = () => {
-    console.log("generating...");
-    const matrix = [];
-    for (let i = 0; i < size; i++) {
-      const row = [];
-      for (let j = 0; j < size + 1; j++) {
-        row.push(
-          <TextField
-            key={`${i}-${j}`}
-            name={`${i}-${j}`}
-            variant="filled"
-            value={matrixValues[i] == undefined? 9999: matrixValues[i][j]}
-            onChange={handleInput}
-          />
-        );
-      }
-      matrix.push(
-        <div key={i} style={{ display: 'flex' }} className='matrixRow'>
-          {row}
-        </div>
-      );
+  const find_result = () => {
+    const augmentedMat = createAugmentedMatrix(A, B);
+    switch (currentMethod) {
+      case Methods.Cramer:
+        return cramer(A, B);
+      case Methods.Gauss:
+        return gauss_elimination(augmentedMat);
+      case Methods.Inversion:
+        return matrixInversion(A, B);
+        case Methods.LU:
+          return luDecomposition(A, B);
+      default:
+        break;
     }
-    setDisplayMatrix(matrix);
-  };
+  }
 
-  useEffect(() => {
-    initializeMatrix();
-  }, [size]);
-  
-  useEffect(() => {
-    generateMatrix();
-  }, [size]);
-
-  const handleClear = (): void => {
-    setMatrixValues(() => {
-      const newMatrix: number[][] = new Array(size);
-      for (let i = 0; i < size; i++) {
-        newMatrix[i] = new Array(size + 1).fill(0);
-      }
-      return newMatrix;
+  const handleMatrixChange = (rowIndex: number, colIndex: number, newValue: number) => {
+    setA((prevA) => {
+      const newA = prevA.map((row, i) => {
+        if (i === rowIndex) {
+          return row.map((value, j) => (j === colIndex ? newValue : value));
+        }
+        return row;
+      });
+      return newA;
     });
-    console.log(matrixValues);
   };
+
+  const handleBChange = (colIndex: number, newValue: number) => {
+    setB((prevB) => {
+      const newB = prevB.map((value, i) => (i === colIndex ? newValue : value));
+      return newB;
+    });
+  };
+
+  const handleMethodChange = (e: SelectChangeEvent<string>) => {
+    setCurrentMethod(e.target.value);
+  }
 
   return (
     <>
       <div className="esan">
-        <form onSubmit={handleSubmit} className="form-padding">
-          <h1 className='center'>Gaussian Elimination</h1>
-          <InputLabel>Size</InputLabel>
+        <Stack spacing={1}>
+          <h1 className="center">Gaussian Elimination</h1>
           <Select
-            value={size}
-            label="Size"
-            onChange={handleDropdown}
+            value={currentMethod}
+            label="Method"
+            onChange={handleMethodChange}
           >
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={6}>6</MenuItem>
-            <MenuItem value={7}>7</MenuItem>
-            <MenuItem value={8}>8</MenuItem>
-            <MenuItem value={9}>9</MenuItem>
+            <MenuItem value={Methods.Cramer}>{Methods.Cramer}</MenuItem>
+            <MenuItem value={Methods.Gauss}>{Methods.Gauss}</MenuItem>
+            <MenuItem value={Methods.Inversion}>{Methods.Inversion}</MenuItem>
+            <MenuItem value={Methods.LU}>{Methods.LU}</MenuItem>
           </Select>
-          <div className='matrixContainer'>
-            {displayMatrix}
-          </div>
-          <div className="submitButton">
-            <Button type="submit" variant='contained' color='success'>submit</Button>
-            <Button variant='contained' onClick={handleClear} color='error'>clear</Button>
-          </div>
-        </form>
-      </div>
+          <TextField
+            variant="outlined"
+            label="Size m*m"
+            type="number"
+            value={size}
+            onChange={(e) => {
+              setSize(Math.max(Math.min(Number(e.target.value), 10), 2));
+            }}
+          />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log("Matrix A:", A);
+              console.log("Vector B:", B);
+              const result = find_result();
+              setAns(result === null || result === undefined ? [] : result);
+            }}
+          >
+            <Box padding={"2em"} display={"flex"} justifyContent={"center"}>
+              <Box className="A">
+                <h3>A</h3>
+                {A.map((row, rowIndex) => {
+                  return (
+                    <Box
+                      key={rowIndex}
+                      width="100%"
+                      display="flex"
+                      justifyContent="space-around"
+                    // gap="2em"
+                    >
+                      {row.map((col, colIndex) => {
+                        return (
+                          <TextField
+                            type="number"
+                            sx={{ maxWidth: 120 }}
+                            key={`${rowIndex}-${colIndex}`}
+                            value={A[rowIndex][colIndex]}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              handleMatrixChange(
+                                rowIndex,
+                                colIndex,
+                                newValue
+                              );
+                            }}
+                          />
+                        );
+                      })}
+                    </Box>
+                  );
+                })}
+              </Box>
+              <Box minWidth={"1em"}></Box>
+              <Box className="B" display={"flex"} flexDirection={"column"}>
+                <h3>B</h3>
+                {B.map((value, colIndex) => {
+                  return (
+                    <TextField
+                      type="number"
+                      sx={{ maxWidth: 120 }}
+                      key={`${colIndex}`}
+                      value={B[colIndex]}
+                      onChange={(e) => {
+                        const newValue = Number(e.target.value);
+                        handleBChange(colIndex, newValue);
+                      }}
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
+            <Button variant="contained" type="submit">
+              Submit
+            </Button>
+          </form>
+          <Stack spacing={2}>
+            <h3>Answer</h3>
+            <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
+              {ans?.map((value, index) => (
+                <h4 key={index}>
+                  x{index} = {value.toFixed(6)}
+                </h4>
+              ))}
+            </Box>
+          </Stack>
+        </Stack>
+      </div >
     </>
-  )
+  );
 }
 
-export default Gaussian_elimination
+export default Gaussian_elimination;
