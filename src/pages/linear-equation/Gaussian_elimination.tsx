@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { gauss_elimination } from './linearEquation'
 import { TextField, Button, InputLabel, Select, MenuItem } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -6,14 +6,21 @@ import { useState } from 'react';
 
 function Gaussian_elimination() {
   const [size, setSize] = useState<number>(2);
-  const [matrixValues, setMatrixValues] = useState<number[][]>(() => {
-    const initialArray: number[][] = new Array(size);
+  const [matrixValues, setMatrixValues] = useState<number[][]>([[]]);
+  const [displayMatrix, setDisplayMatrix] = useState<JSX.Element[]>([]);
 
-    for (let i = 0; i < size; i++) {
-      initialArray[i] = new Array(size + 1).fill(0);
-    }
-    return initialArray;
-  });
+  const initializeMatrix = () => {
+    console.log("initializing...");
+    setMatrixValues(() => {
+      const initialArray: number[][] = new Array(size);
+
+      for (let i = 0; i < size; i++) {
+        initialArray[i] = new Array(size + 1).fill(0);
+      }
+      return initialArray;
+    });
+    console.log(matrixValues);
+  };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,19 +33,21 @@ function Gaussian_elimination() {
     });
   };
 
-  const handleSizeDropdown = (e: SelectChangeEvent<number>) => {
+  const handleDropdown = (e: SelectChangeEvent<number>) => {
     e.preventDefault();
     setSize(Number(e.target.value));
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(matrixValues);
     const result = gauss_elimination(matrixValues);
     const formattedResult: number[] | undefined = result?.map((num) => parseFloat(num.toFixed(6)));
     console.log(formattedResult);
-  }
+  };
 
   const generateMatrix = () => {
+    console.log("generating...");
     const matrix = [];
     for (let i = 0; i < size; i++) {
       const row = [];
@@ -48,6 +57,7 @@ function Gaussian_elimination() {
             key={`${i}-${j}`}
             name={`${i}-${j}`}
             variant="filled"
+            value={matrixValues[i] == undefined? 9999: matrixValues[i][j]}
             onChange={handleInput}
           />
         );
@@ -58,22 +68,38 @@ function Gaussian_elimination() {
         </div>
       );
     }
-    return matrix;
+    setDisplayMatrix(matrix);
   };
 
+  useEffect(() => {
+    initializeMatrix();
+  }, [size]);
+  
+  useEffect(() => {
+    generateMatrix();
+  }, [size]);
+
+  const handleClear = (): void => {
+    setMatrixValues(() => {
+      const newMatrix: number[][] = new Array(size);
+      for (let i = 0; i < size; i++) {
+        newMatrix[i] = new Array(size + 1).fill(0);
+      }
+      return newMatrix;
+    });
+    console.log(matrixValues);
+  };
 
   return (
     <>
       <div className="esan">
         <form onSubmit={handleSubmit} className="form-padding">
           <h1 className='center'>Gaussian Elimination</h1>
-          <InputLabel id="demo-simple-select-label">Size</InputLabel>
+          <InputLabel>Size</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
             value={size}
-            label="Age"
-            onChange={handleSizeDropdown}
+            label="Size"
+            onChange={handleDropdown}
           >
             <MenuItem value={2}>2</MenuItem>
             <MenuItem value={3}>3</MenuItem>
@@ -85,11 +111,11 @@ function Gaussian_elimination() {
             <MenuItem value={9}>9</MenuItem>
           </Select>
           <div className='matrixContainer'>
-            {generateMatrix()}
+            {displayMatrix}
           </div>
           <div className="submitButton">
             <Button type="submit" variant='contained' color='success'>submit</Button>
-            <Button variant='contained' color='error'>clear</Button>
+            <Button variant='contained' onClick={handleClear} color='error'>clear</Button>
           </div>
         </form>
       </div>
