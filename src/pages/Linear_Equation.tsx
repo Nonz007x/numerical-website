@@ -1,44 +1,54 @@
 import { Box, TextField, Stack, Button, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 import { useEffect, useState } from "react";
-import { gauss_elimination, createAugmentedMatrix, cramer, matrixInversion, luDecomposition } from "./linearEquation";
+import { LinearEquation } from "../function/linearEquation";
+import { Util } from "../function/utils";
 
-function Gaussian_elimination() {
-  enum Methods {
+function Linear_Equation() {
+  enum Method {
     Cramer = 'Cramer',
     Gauss = 'Gauss',
     Inversion = 'Matrix Inversion',
-    LU = 'LU Decomposition'
+    LU = 'LU Decomposition',
+    GaussSiedel = 'Gauss Siedel',
+    Jacobi = 'Jacobi',
   }
+
   const [size, setSize] = useState<number>(3);
-  const [A, setA] = useState<number[][]>(() => {
-    return Array.from({ length: size }, () => new Array(size).fill(0));
+  const [A, setA] = useState<string[][]>(() => {
+    return Array.from({ length: size }, () => new Array(size).fill(''));
   });
-  const [B, setB] = useState<number[]>(() => new Array(size).fill(0));
-  const [currentMethod, setCurrentMethod] = useState<string>('');
+  const [B, setB] = useState<string[]>(() => new Array(size).fill(''));
+  const [currentMethod, setCurrentMethod] = useState<string>(Method.Cramer);
   const [ans, setAns] = useState<number[]>();
 
   useEffect(() => {
-    setA(() => Array.from({ length: size }, () => new Array(size).fill(0)));
-    setB(() => new Array(size).fill(0));
+    setA(() => Array.from({ length: size }, () => new Array(size).fill('')));
+    setB(() => new Array(size).fill(''));
   }, [size]);
 
   const find_result = () => {
-    const augmentedMat = createAugmentedMatrix(A, B);
+    const matrix1 = Util.strToNumArr2D(A);
+    const matrix2 = Util.strToNumArr(B);
+    const augmentedMat = Util.createAugmentedMatrix(matrix1, matrix2);
     switch (currentMethod) {
-      case Methods.Cramer:
-        return cramer(A, B);
-      case Methods.Gauss:
-        return gauss_elimination(augmentedMat);
-      case Methods.Inversion:
-        return matrixInversion(A, B);
-        case Methods.LU:
-          return luDecomposition(A, B);
+      case Method.Cramer:
+        return LinearEquation.cramer(matrix1, matrix2);
+      case Method.Gauss:
+        return LinearEquation.gauss_elimination(augmentedMat);
+      case Method.Inversion:
+        return LinearEquation.matrixInversion(matrix1, matrix2);
+      case Method.LU:
+        return LinearEquation.luDecomposition(matrix1, matrix2);
+      case Method.GaussSiedel:
+        return LinearEquation.gaussSiedel(matrix1, matrix2);
+      case Method.Jacobi:
+        return LinearEquation.jacobi(matrix1, matrix2);
       default:
         break;
     }
   }
 
-  const handleMatrixChange = (rowIndex: number, colIndex: number, newValue: number) => {
+  const handleMatrixChange = (rowIndex: number, colIndex: number, newValue: string) => {
     setA((prevA) => {
       const newA = prevA.map((row, i) => {
         if (i === rowIndex) {
@@ -50,7 +60,7 @@ function Gaussian_elimination() {
     });
   };
 
-  const handleBChange = (colIndex: number, newValue: number) => {
+  const handleBChange = (colIndex: number, newValue: string) => {
     setB((prevB) => {
       const newB = prevB.map((value, i) => (i === colIndex ? newValue : value));
       return newB;
@@ -65,19 +75,22 @@ function Gaussian_elimination() {
     <>
       <div className="esan">
         <Stack spacing={1}>
-          <h1 className="center">Gaussian Elimination</h1>
+          <h1 className="center">Linear Equation</h1>
           <Select
+            variant="filled"
             value={currentMethod}
             label="Method"
             onChange={handleMethodChange}
           >
-            <MenuItem value={Methods.Cramer}>{Methods.Cramer}</MenuItem>
-            <MenuItem value={Methods.Gauss}>{Methods.Gauss}</MenuItem>
-            <MenuItem value={Methods.Inversion}>{Methods.Inversion}</MenuItem>
-            <MenuItem value={Methods.LU}>{Methods.LU}</MenuItem>
+            <MenuItem value={Method.Cramer}>{Method.Cramer}</MenuItem>
+            <MenuItem value={Method.Gauss}>{Method.Gauss}</MenuItem>
+            <MenuItem value={Method.Inversion}>{Method.Inversion}</MenuItem>
+            <MenuItem value={Method.LU}>{Method.LU}</MenuItem>
+            <MenuItem value={Method.GaussSiedel}>{Method.GaussSiedel}</MenuItem>
+            <MenuItem value={Method.Jacobi}>{Method.Jacobi}</MenuItem>
           </Select>
           <TextField
-            variant="outlined"
+            variant="filled"
             label="Size m*m"
             type="number"
             value={size}
@@ -104,17 +117,19 @@ function Gaussian_elimination() {
                       width="100%"
                       display="flex"
                       justifyContent="space-around"
+                      gap="10px"
                     // gap="2em"
                     >
-                      {row.map((col, colIndex) => {
+                      {row.map((_col, colIndex) => {
                         return (
                           <TextField
+                            variant="filled"
                             type="number"
                             sx={{ maxWidth: 120 }}
                             key={`${rowIndex}-${colIndex}`}
                             value={A[rowIndex][colIndex]}
                             onChange={(e) => {
-                              const newValue = Number(e.target.value);
+                              const newValue = e.target.value;
                               handleMatrixChange(
                                 rowIndex,
                                 colIndex,
@@ -131,15 +146,16 @@ function Gaussian_elimination() {
               <Box minWidth={"1em"}></Box>
               <Box className="B" display={"flex"} flexDirection={"column"}>
                 <h3>B</h3>
-                {B.map((value, colIndex) => {
+                {B.map((_value, colIndex) => {
                   return (
                     <TextField
+                      variant="filled"
                       type="number"
                       sx={{ maxWidth: 120 }}
                       key={`${colIndex}`}
                       value={B[colIndex]}
                       onChange={(e) => {
-                        const newValue = Number(e.target.value);
+                        const newValue = e.target.value;
                         handleBChange(colIndex, newValue);
                       }}
                     />
@@ -167,4 +183,4 @@ function Gaussian_elimination() {
   );
 }
 
-export default Gaussian_elimination;
+export default Linear_Equation;

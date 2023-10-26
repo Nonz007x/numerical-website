@@ -71,6 +71,7 @@ a {
   grid-column: span 2;
   /* justify-content: center; */
   display: flex;
+  justify-content: center;
   gap: 10px;
 
 }

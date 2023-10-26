@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {createRoot} from 'react-dom/client';
 import Sidebar from './Sidebar.tsx';
-import { routes } from './utils';
+import { routes } from './routes.tsx';
 import React from 'react';
 import './index.css';
 

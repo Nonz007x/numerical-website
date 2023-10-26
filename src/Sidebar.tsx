@@ -1,4 +1,4 @@
-import { routes, Route } from './utils';
+import { routes, Route } from './routes';
 import './css/sidebar.css';
 
 function Sidebar() {
