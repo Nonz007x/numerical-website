@@ -1,8 +1,8 @@
 import { LinearEquation } from "./linearEquation";
 import { Util } from "./utils";
 
-export class Regression {
-    linear_regression(X: number[], Y: number[], targetX: number): number | null {
+export class RegressionMethod {
+    static linear_regression(X: number[], Y: number[], targetX: number): number | null {
         const n: number = X.length;
         let [sumY, sumX, sumXY, sumXX] = [0, 0, 0, 0];
 
@@ -26,7 +26,7 @@ export class Regression {
     }
 
     // order 0 to m
-    polynomial_regression(X: number[], Y: number[], order: number, targetX: number): number | null {
+    static polynomial_regression(X: number[], Y: number[], order: number, targetX: number): number | null {
         if (order === 1)
             return this.linear_regression(X, Y, targetX);
 
@@ -83,7 +83,7 @@ export class Regression {
         return result;
     }
 
-    multiple_linear_regression(X: number[][], Y: number[]): number[] | null {
+    static multiple_linear_regression(X: number[][], Y: number[]): number[] | null {
         const order = X.length + 1;
         const n = X[0].length;
 

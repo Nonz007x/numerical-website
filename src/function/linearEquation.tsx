@@ -10,7 +10,7 @@ export class LinearEquation {
             let pivot = A[i][i];
             if (pivot === 0)
                 pivot = 1e-9;
-            console.log(pivot);
+            
             const pivot_inv = 1.0 / pivot;
 
             for (let j = i; j < COL_SIZE; j++) {
