@@ -1,4 +1,4 @@
-import { Box, TextField, Stack, Button, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Box, TextField, Stack, Button, Select, MenuItem, SelectChangeEvent, InputLabel } from "@mui/material";
 import { useEffect, useState } from "react";
 import { LinearEquation } from "../function/linearEquation";
 import { Util } from "../function/utils";
@@ -76,8 +76,10 @@ function Linear_Equation() {
       <div className="esan">
         <Stack spacing={1}>
           <h1 className="center">Linear Equation</h1>
+          <InputLabel>Select Method</InputLabel>
           <Select
-            variant="filled"
+            size='small'
+            variant="outlined"
             value={currentMethod}
             label="Method"
             onChange={handleMethodChange}
@@ -90,7 +92,8 @@ function Linear_Equation() {
             <MenuItem value={Method.Jacobi}>{Method.Jacobi}</MenuItem>
           </Select>
           <TextField
-            variant="filled"
+            size='small'
+            variant="outlined"
             label="Size m*m"
             type="number"
             value={size}
@@ -123,7 +126,7 @@ function Linear_Equation() {
                       {row.map((_col, colIndex) => {
                         return (
                           <TextField
-                            variant="filled"
+                            variant="outlined"
                             type="number"
                             sx={{ maxWidth: 120 }}
                             key={`${rowIndex}-${colIndex}`}
@@ -149,7 +152,7 @@ function Linear_Equation() {
                 {B.map((_value, colIndex) => {
                   return (
                     <TextField
-                      variant="filled"
+                      variant="outlined"
                       type="number"
                       sx={{ maxWidth: 120 }}
                       key={`${colIndex}`}
