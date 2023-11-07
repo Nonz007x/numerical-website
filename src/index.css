@@ -21,12 +21,13 @@ a {
 
 .app {
   display: flex;
+  justify-content: center;
 }
 
 .content {
   width: 90vw;
-  display: flex;
   padding: 20px;
+  display: grid;
   justify-items: center
 }
 
@@ -34,6 +35,7 @@ a {
   width: 1000px;
   display: flex;
   flex-direction: column;
+  justify-items: center;
 }
 
 .center {

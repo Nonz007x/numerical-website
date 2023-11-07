@@ -1,7 +1,9 @@
 import { Box, TextField, Stack, Button, Select, MenuItem, SelectChangeEvent, InputLabel } from "@mui/material";
-import { useEffect, useState } from "react";
 import { LinearEquation } from "../function/linearEquation";
-import { Util } from "../function/utils";
+import { useEffect, useState } from "react";
+import { Util, Method as utilMethod } from "../function/utils";
+import * as fetchX from "../tools/fetchX";
+import { Index } from "mathjs";
 
 function Linear_Equation() {
   enum Method {
@@ -24,6 +26,7 @@ function Linear_Equation() {
   useEffect(() => {
     setA(() => Array.from({ length: size }, () => new Array(size).fill('')));
     setB(() => new Array(size).fill(''));
+    setAns([]);
   }, [size]);
 
   const find_result = () => {
@@ -69,6 +72,36 @@ function Linear_Equation() {
 
   const handleMethodChange = (e: SelectChangeEvent<string>) => {
     setCurrentMethod(e.target.value);
+  }
+
+
+  const handleArchive = () => {
+    const archiveData = {
+      name: utilMethod.LINEAR_EQUATION,
+      jsonData: {
+        size: size,
+        a: A,
+        b: B,
+        method: currentMethod,
+        ans: ans,
+      }
+    }
+    fetchX.post('http://localhost:1987/post/archive', archiveData).then(e => {
+      console.log(e);
+    })
+  }
+
+  const handleGetArchive = () => {
+    fetchX.post('http://localhost:1987/get/archive', {name: utilMethod.LINEAR_EQUATION}).then(e => {
+      const randIndex: number = Math.floor(Math.random() * e.length);
+      const data = e[randIndex].jsonData;
+      console.log(randIndex);
+      setSize(data.size);
+      setA(data.a);
+      setB(data.b);
+      setCurrentMethod(data.method);
+      setAns(data.ans);
+    })
   }
 
   return (
@@ -168,6 +201,12 @@ function Linear_Equation() {
             </Box>
             <Button variant="contained" type="submit">
               Submit
+            </Button>
+            <Button variant="contained" onClick={handleArchive}>
+              Archive
+            </Button>
+            <Button variant="contained" onClick={handleGetArchive}>
+              Get Archive
             </Button>
           </form>
           <Stack spacing={2}>

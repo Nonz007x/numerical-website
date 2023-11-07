@@ -3,11 +3,12 @@ import NewtonRaphson from './pages/root-of-equation/NewtonRaphson.tsx';
 import FixedPoint from './pages/root-of-equation/FixedPoint.tsx';
 import Bisection from './pages/root-of-equation/Bisection.tsx';
 import Graphical from './pages/root-of-equation/Graphical.tsx';
-import Secant from './pages/root-of-equation/Secant.tsx';
-import Home from './Home.tsx';
 import Linear_Equation from './pages/Linear_Equation.tsx';
-import Splines from './pages/Splines.tsx';
+import Secant from './pages/root-of-equation/Secant.tsx';
 import Regression from './pages/Regression.tsx';
+import Splines from './pages/Splines.tsx';
+import Home from './Home.tsx';
+import Test from './Test.tsx';
 
 
 export interface Route {
@@ -17,6 +18,11 @@ export interface Route {
 }
 
 export const routes: Route[] = [
+  {
+    path: "/test",
+    name: "Test",
+    element: <Test />
+  },
   {
     path: "/",
     name: "Home",
@@ -53,7 +59,7 @@ export const routes: Route[] = [
     element: <Secant />
   },
   {
-    path: "/linear_equation",
+    path: "/linear-equation",
     name: "Linear Equation",
     element: <Linear_Equation />
   },

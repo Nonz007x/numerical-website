@@ -1,3 +1,10 @@
+export enum Method {
+  ROOT_OF_EQUATION = 'rootOfEquation',
+  LINEAR_EQUATION = 'linearEquation',
+  REGRESSION = 'regression',
+  SPLINES = 'splines',
+}
+
 export class Util {
     static strToNumArr2D(stringArray: string[][]): number[][] {
         const numberArray: number[][] = [];

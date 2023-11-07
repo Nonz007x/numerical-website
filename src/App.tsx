@@ -7,9 +7,9 @@ import './index.css';
 
 const App = () => {
   return (
-    <React.StrictMode>
+    // <React.StrictMode>
       <div className="app">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="content">
           <Router>
             <Routes>
@@ -21,7 +21,7 @@ const App = () => {
           </Router>
         </div>
       </div>
-    </React.StrictMode>
+    // </React.StrictMode>
   );
 };
 
