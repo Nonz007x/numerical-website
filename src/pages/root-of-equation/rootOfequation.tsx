@@ -94,6 +94,11 @@ export function bisection_method2(fn: string, tolerance: number, xl: number, xr:
   return {xm: xm, points: points};
 }
 
+export interface GraphicalReturn {
+  x: number, 
+  points: Point[],
+}
+
 export function graphical_method(fn: string, tolerance: number, start: number, stop: number): number | null {
     if (Number.isNaN(tolerance) || tolerance == 0)
         return null;
@@ -128,6 +133,44 @@ export function graphical_method(fn: string, tolerance: number, start: number, s
         return null;
 
     return x;
+}
+
+export function graphical_method2(fn: string, tolerance: number, start: number, stop: number): GraphicalReturn | null {
+  if (Number.isNaN(tolerance) || tolerance == 0)
+      return null;
+  const f = math.compile(fn);
+  const incrementer = tolerance;
+  let x = start;
+  let upperBound = stop;
+  const points: Point[] = [];
+  while (x < upperBound) {
+      const fx = f.evaluate({ x });
+      const fxPlus1 = f.evaluate({ x: x + 1 });
+
+      if (fx === 0) {
+          return x;
+      } else if (fx * fxPlus1 < 0) {
+          upperBound = x + 1;
+          break;
+      }
+
+      x++;
+  }
+
+  while (x <= upperBound) {
+      console.log(x);
+      const fx = f.evaluate({ x: x });
+      points.push({x:x, y:fx});
+      if (fx >= 0) {
+          break;
+      }
+      x += incrementer;
+  }
+
+  if (x >= upperBound)
+      return null;
+
+  return {x:x, points:points};
 }
 
 export function newtonRaphsonMethod(initialGuess: number, tolerance: number, equation: string) {

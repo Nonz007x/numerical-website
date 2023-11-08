@@ -20,9 +20,8 @@ const Bisection = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     setTolerance(Number(toleranceInput));
-    const kuy = bisection_method2(fn, tolerance, xl, xr);
-    setResult(kuy);
-    // setResult(result !== null ? result.toFixed(-Math.log10(tolerance)) : "Invalid Expression");
+    const result = bisection_method2(fn, tolerance, xl, xr);
+    setResult(result);
   };
 
   const handleClear = (): void => {
@@ -43,8 +42,8 @@ const Bisection = () => {
             <TextField label="Error (e)" variant="filled" value={toleranceInput} onChange={(e) => setToleranceInput(e.target.value)} style={{ width: '30%' }} size='small' />
           </div>
           <div className="guessInput">
-            <TextField label="Guess 1 (xl)" variant="filled" type="text" onChange={(e) => setXl(Number(e.target.value))} style={{ width: '50%' }} size='small' />
-            <TextField label="Guess 2 (xr)" variant="filled" type="text" onChange={(e) => setXr(Number(e.target.value))} style={{ width: '50%' }} size='small' />
+            <TextField label="Guess 1 (xl)" value={xl} variant="filled" type="text" onChange={(e) => setXl(Number(e.target.value))} style={{ width: '50%' }} size='small' />
+            <TextField label="Guess 2 (xr)" value={xr} variant="filled" type="text" onChange={(e) => setXr(Number(e.target.value))} style={{ width: '50%' }} size='small' />
           </div>
           <div className='submitButton'>
             <Button type="submit" variant='contained' color='success'>submit</Button>

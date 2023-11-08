@@ -16,7 +16,7 @@ function queryDatabase(sql, params, callback) {
 const app = express();
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   const sql = 'SELECT * FROM test WHERE 1';
   const params = [];
 

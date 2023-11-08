@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { TextField, Button } from '@mui/material';
-import { graphical_method } from './rootOfequation';
+import { GraphicalReturn, graphical_method2 } from './rootOfequation';
+import MurderPlot from './MurderPlot';
 
 const Graphical = () => {
   const [toleranceInput, setToleranceInput] = useState<string>('0.00001');
   const [fn, setFn] = useState('');
   const [start, setStart] = useState<number>(0);
   const [stop, setStop] = useState<number>(0);
-  const [result, setResult] = useState<string | null>('');
+  const [result, setResult] = useState<GraphicalReturn | null>();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -17,13 +18,14 @@ const Graphical = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     const tolerance = Number(toleranceInput);
-    const result = graphical_method(fn, tolerance, start, stop);
-    setResult(result !== null ? result.toFixed(-Math.log10(tolerance)) : "Invalid Expression");
+    const result = graphical_method2(fn, tolerance, start, stop);
+    setResult(result);
+    // setResult(result !== null ? result.toFixed(-Math.log10(tolerance)) : "Invalid Expression");
   };
 
   const handleClear = (): void => {
     setToleranceInput('');
-    setResult('');
+    setResult(undefined);
     setStart(0);
     setStop(0);
     setFn('');
@@ -47,8 +49,9 @@ const Graphical = () => {
             <Button variant='contained' color='error' onClick={handleClear}>clear</Button>
           </div>
         </form>
+        <MurderPlot points={result?.points}></MurderPlot>
         <div>
-          Root is : {result}
+          Root is : {result?.x}
         </div>
       </div>
     </>
