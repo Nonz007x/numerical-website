@@ -5,6 +5,11 @@ export enum Method {
   SPLINES = 'splines',
 }
 
+export type Point = {
+  x: number,
+  y: number
+}
+
 export class Util {
     static strToNumArr2D(stringArray: string[][]): number[][] {
         const numberArray: number[][] = [];

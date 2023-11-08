@@ -1,5 +1,6 @@
 /* eslint-disable no-constant-condition */
 import * as math from 'mathjs'
+import { Point } from '../../function/utils';
 
 export function bisection_method(fn: string, tolerance: number, xl: number, xr: number): number | null {
 
@@ -42,6 +43,55 @@ export function bisection_method(fn: string, tolerance: number, xl: number, xr: 
     }
 
     return xm;
+}
+
+export interface BisectionReturn {
+  xm: number, 
+  points: Point[],
+}
+
+export function bisection_method2(fn: string, tolerance: number, xl: number, xr: number): BisectionReturn | null {
+
+  let f: math.EvalFunction;
+  let fxm: number;
+  let fxr: number;
+  let xm = (xl + xr) / 2.0;
+  const points: Point[] = [];
+
+  try {
+      f = math.compile(fn);
+      fxm = f.evaluate({ x: xm });
+      fxr = f.evaluate({ x: xr });
+      if (fxm === undefined || fxm === null || fxr === undefined || fxr === null) {
+          throw new Error("fxm or fxr is undefined or null");
+      }
+  } catch (error) {
+      console.log(error);
+      return null;
+  }
+
+  const maxIterations = 1000;
+  let iterations = 0;
+  if (f.evaluate({ x: xl }) * f.evaluate({ x: xr }) >= 0) {
+      console.log("Initial guess does not bracket the root.");
+      return null;
+  } else {
+      while (Math.abs(fxm) > tolerance && iterations < maxIterations) {
+          if (fxm * fxr < 0) {
+              xl = xm;
+          } else {
+              xr = xm;
+              fxr = fxm;
+          }
+          points.push({x:xm, y:fxm});
+          xm = (xl + xr) / 2.0;
+          fxm = f.evaluate({ x: xm });
+          console.log(xm);
+          iterations++;
+      }
+  }
+
+  return {xm: xm, points: points};
 }
 
 export function graphical_method(fn: string, tolerance: number, start: number, stop: number): number | null {

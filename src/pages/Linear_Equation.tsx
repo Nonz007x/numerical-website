@@ -3,7 +3,6 @@ import { LinearEquation } from "../function/linearEquation";
 import { useEffect, useState } from "react";
 import { Util, Method as utilMethod } from "../function/utils";
 import * as fetchX from "../tools/fetchX";
-import { Index } from "mathjs";
 
 function Linear_Equation() {
   enum Method {
