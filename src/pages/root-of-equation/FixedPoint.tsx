@@ -1,4 +1,4 @@
-import { fixedPointMethod } from './rootOfequation';
+import { fixedPointMethod } from '../../function/rootOfequation';
 import { TextField, Button } from '@mui/material';
 import React, { useState } from 'react'
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { TextField, Button } from '@mui/material';
-import { GraphicalReturn, graphical_method2 } from './rootOfequation';
+import { GraphicalReturn, graphical_method2 } from '../../function/rootOfequation';
 import MurderPlot from './MurderPlot';
 
 const Graphical = () => {

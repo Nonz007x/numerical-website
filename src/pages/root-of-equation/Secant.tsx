@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { TextField, Button } from '@mui/material';
-import { secantMethod } from './rootOfequation';
+import { secantMethod } from '../../function/rootOfequation';
 
 const Secant = () => {
     const [toleranceInput, setToleranceInput] = useState<string>('0.000001');

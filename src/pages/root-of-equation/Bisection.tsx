@@ -1,16 +1,15 @@
-import { bisection_method2 } from './rootOfequation';
+import { RootAndPoints } from '../../function/rootOfequation';
 import { TextField, Button } from '@mui/material';
 import React, { useState } from 'react'
 import MurderPlot from './MurderPlot';
-import { BisectionReturn } from './rootOfequation';
-
+import { BisectionMethod  } from '../../function/rootOfequation';
 const Bisection = () => {
   const [toleranceInput, setToleranceInput] = useState<string>('0.000001');
   const [tolerance, setTolerance] = useState<number>(1e-6);
   const [fn, setFn] = useState('');
   const [xl, setXl] = useState<number>(0);
   const [xr, setXr] = useState<number>(0);
-  const [result, setResult] = useState<BisectionReturn | null>();
+  const [result, setResult] = useState<RootAndPoints | null>();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -20,8 +19,8 @@ const Bisection = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     setTolerance(Number(toleranceInput));
-    const result = bisection_method2(fn, tolerance, xl, xr);
-    setResult(result);
+    const bisection = new BisectionMethod(fn, xl, xr, tolerance); 
+    setResult(bisection.findRoot());
   };
 
   const handleClear = (): void => {
@@ -52,7 +51,7 @@ const Bisection = () => {
         </form>
         <MurderPlot points={result?.points}></MurderPlot>
         <div>
-          Root is : {result?.xm !== null ? result?.xm : "Invalid Expression"}
+          Root is : {result?.root !== null ? result?.root : "Invalid Expression"}
         </div>
       </div>
     </>

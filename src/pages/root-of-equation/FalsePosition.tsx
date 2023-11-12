@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { falsePositionMethod } from './rootOfequation';
+import { falsePositionMethod } from '../../function/rootOfequation';
 import { TextField, Button } from '@mui/material';
 
 const FalsePosition = () => {
